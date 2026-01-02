@@ -813,9 +813,10 @@ select,
 }
 
 .login-box {
-  padding: 50px 40px;
+  padding: 40px 30px;
   text-align: center;
-  width: 360px;
+  width: 90%;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   gap: 25px;
@@ -1110,36 +1111,131 @@ select,
   /* Lighter Neon */
 }
 
-/* --- Mobile --- */
+/* --- Mobile Optimizations --- */
 @media (max-width: 768px) {
   .app-container {
     flex-direction: column;
     padding: 10px;
-    gap: 10px;
-    height: auto;
-    overflow-y: auto;
+    gap: 15px;
+    height: 100vh;
+    overflow: hidden;
+    /* Main container fixed, scroll inner views */
   }
 
   .sidebar {
     width: 100%;
+    height: auto;
     flex-direction: row;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-radius: 15px;
+    flex-shrink: 0;
   }
 
-  /* Reset Dashboard Grid for Mobile */
+  .logo {
+    margin-bottom: 0;
+  }
+
+  .logo h2 {
+    display: none;
+    /* Hide 'Nova' text to save space */
+  }
+
+  .nav-links {
+    flex-direction: row;
+    gap: 5px;
+  }
+
+  .nav-links li {
+    padding: 10px;
+    font-size: 0;
+    /* Hide text, show only icons */
+    gap: 0;
+  }
+
+  .nav-links li .icon {
+    font-size: 1.4rem;
+  }
+
+  .nav-links li:hover,
+  .nav-links li.active {
+    transform: none;
+    /* Disable horizontal slide on mobile */
+  }
+
+  main {
+    padding: 0;
+  }
+
+  /* Dashboard Adjustments */
+  .stats-container {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .card-info .amount {
+    font-size: 1.6rem;
+    /* Smaller money text */
+  }
+
+  .summary-card {
+    padding: 20px;
+  }
+
   .dashboard-grid {
     display: flex;
     flex-direction: column;
-  }
-
-  .stats-container {
-    grid-template-columns: 1fr;
+    padding-bottom: 20px;
   }
 
   .big-chart,
   .small-chart {
-    height: 300px;
+    height: 350px;
+    padding: 20px;
+    width: 100% !important;
+  }
+
+  /* Chat Adjustments */
+  .message {
+    max-width: 90%;
+    /* Wider bubbles on small screens */
+    padding: 10px 15px;
+  }
+
+  .chat-messages {
+    padding: 5px;
+  }
+
+  /* History Polish */
+  .history-item {
+    padding: 14px 16px;
+  }
+
+  .item-amount {
+    font-size: 1rem;
+  }
+
+  /* Actions always slightly visible on mobile since there's no hover */
+  .item-actions {
+    opacity: 0.8 !important;
+    transform: none !important;
+    gap: 8px;
+  }
+
+  .action-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 400px) {
+  .login-box {
+    padding: 30px 20px;
+  }
+
+  .premium-text {
+    font-size: 1.8rem;
   }
 }
