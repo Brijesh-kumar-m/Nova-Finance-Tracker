@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nova | AI Finance Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="background-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- Main App Container -->
+  <div class="app-container">
+
+    <!-- Sidebar / Navigation -->
+    <nav class="sidebar glass-panel">
+      <div class="logo">
+        <span class="logo-icon">✨</span>
+        <h2>Nova</h2>
+      </div>
+      <ul class="nav-links">
+        <li class="active" onclick="switchTab('chat')">
+          <span class="icon">💬</span> Chat
+        </li>
+        <li onclick="switchTab('dashboard')">
+          <span class="icon">📊</span> Dashboard
+        </li>
+        <li onclick="switchTab('history')">
+          <span class="icon">📜</span> History
+        </li>
+        <li onclick="openChangePinModal()" class="bottom-link">
+          <span class="icon">🔐</span> Change Password
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="content-area">
+
+      <!-- VIEW: CHAT INTERFACE -->
+      <section id="chat-view" class="view active-view">
+        <div class="chat-container glass-panel">
+          <div class="chat-header">
+            <h3>Transaction Assistant</h3>
+            <p>Just type what you spent (e.g., "Grocery 500")</p>
+          </div>
+
+          <div class="chat-messages" id="chat-messages">
+            <!-- Bot Greeting -->
+            <div class="message bot-message">
+              <div class="message-content">
+                Hello! I'm ready to log your expenses. Try typing something like "Taxi 250" or "Salary 50000".
+              </div>
+              <div class="message-time">Now</div>
+            </div>
+          </div>
+
+          <div class="chat-input-area">
+            <button id="mic-btn" class="icon-btn" title="Speak to add transaction">
+              <svg class="mic-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <!-- Clean Google Mic Icon (2 Paths - Blue/Green) -->
+                <path fill="#4285F4" d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" />
+                <path fill="#34A853"
+                  d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
+              </svg>
+            </button>
+            <input type="text" id="transaction-input" placeholder="Type here..." autocomplete="off">
+            <button id="send-btn" class="send-button">➤</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW: DASHBOARD -->
+      <!-- VIEW: DASHBOARD -->
+      <section id="dashboard-view" class="view">
+        <div class="dashboard-grid">
+
+          <!-- Row 1: Welcome / AI -->
+          <div class="welcome-section">
+            <div id="ai-insights" class="insights-card" style="display:none;"></div>
+          </div>
+
+          <!-- Row 2: Stats Cards -->
+          <div class="stats-container">
+            <div class="card glass-panel summary-card income-card">
+              <div id="income-icon" class="card-icon">↓</div>
+              <div class="card-info">
+                <h4>Income</h4>
+                <p class="amount income">₹0</p>
+              </div>
+            </div>
+            <div class="card glass-panel summary-card expense-card">
+              <div id="expense-icon" class="card-icon">↑</div>
+              <div class="card-info">
+                <h4>Expenses</h4>
+                <p class="amount expense">₹0</p>
+              </div>
+            </div>
+            <div class="card glass-panel summary-card balance-card">
+              <div class="card-icon">₹</div>
+              <div class="card-info">
+                <h4>Balance</h4>
+                <p class="amount balance">₹0</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Main Chart -->
+          <div class="card glass-panel chart-card big-chart">
+            <div class="chart-header-row">
+              <h4>Analytics</h4>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <button class="icon-btn small-btn" onclick="openBudgetModal()" title="Set Budget Goals">🎯</button>
+                <select id="chart-period-select" class="glass-select">
+                  <option value="month">This Month</option>
+                  <option value="year">This Year</option>
+                </select>
+              </div>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="mainChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Row 3: Category Chart -->
+          <div class="card glass-panel chart-card small-chart">
+            <h4>Spending</h4>
+            <div class="chart-body">
+              <div class="chart-visual">
+                <canvas id="categoryChart"></canvas>
+              </div>
+              <div id="categoryLegend" class="custom-legend"></div>
+            </div>
+          </div>
+
+          <!-- Row 4: Budgets -->
+          <div id="budget-container" class="budget-list glass-panel card full-width"></div>
+
+        </div>
+      </section>
+
+      <!-- VIEW: HISTORY -->
+      <section id="history-view" class="view">
+        <div class="glass-panel full-height-panel">
+          <div class="glass-panel full-height-panel">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+              <h3>Transaction History</h3>
+              <button class="secondary-btn small-btn" onclick="exportData()">📥 Export CSV</button>
+            </div>
+            <div class="transaction-list" id="transaction-list">
+              <!-- Items will be injected here -->
+            </div>
+          </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Login Overlay -->
+  <div id="login-overlay" class="login-overlay active-overlay">
+    <div class="login-box glass-panel">
+      <div class="login-brand">
+        <span class="logo-icon">✨</span>
+        <h1 class="premium-text">Nova</h1>
+      </div>
+      <h2>Welcome Back</h2>
+      <p>Verify your identity to access your private vault.</p>
+      <input type="password" id="pin-input" maxlength="8" placeholder="••••••••" />
+      <div id="login-error" class="login-error"></div>
+      <button id="login-btn" class="neon-button">Unlock Vault</button>
+    </div>
+  </div>
+
+  <!-- Edit Transaction Modal -->
+  <div id="edit-modal" class="modal-overlay">
+    <div class="modal-content glass-panel">
+      <h3>Edit Transaction</h3>
+      <div class="form-group">
+        <label>Category</label>
+        <input type="text" id="edit-category">
+      </div>
+      <div class="form-group">
+        <label>Amount</label>
+        <input type="number" id="edit-amount">
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select id="edit-type" class="glass-select full-width">
+          <option value="income">Income (+)</option>
+          <option value="expense">Expense (-)</option>
+        </select>
+      </div>
+      <div class="form-group" style="flex-direction:row; align-items:center; gap:10px;">
+        <input type="checkbox" id="edit-recurring" style="width:auto;">
+        <label for="edit-recurring" style="margin:0;">Make Recurring (Monthly)</label>
+      </div>
+      <div class="modal-actions">
+        <button id="cancel-edit-btn" class="secondary-btn">Cancel</button>
+        <button id="save-edit-btn" class="primary-btn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change PIN Modal -->
+  <div id="pin-modal" class="modal-overlay">
+    <div class="modal-content glass-panel">
+      <h3>Change Security PIN</h3>
+      <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;">To prevent unauthorized access,
+        please verify your current details.</p>
+
+      <div class="form-group">
+        <label>Current Password</label>
+        <input type="password" id="old-pin" maxlength="8" placeholder="Enter current password">
+      </div>
+      <div class="form-group">
+        <label>New Password (6-8 chars)</label>
+        <input type="password" id="new-pin" maxlength="8" placeholder="Enter new password">
+      </div>
+      <div class="form-group">
+        <label>Confirm New Password</label>
+        <input type="password" id="confirm-new-pin" maxlength="8" placeholder="Confirm new password">
+      </div>
+
+      <div class="modal-actions">
+        <button id="cancel-pin-btn" class="secondary-btn">Cancel</button>
+        <button id="save-pin-btn" class="primary-btn">Update PIN</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Budget Modal -->
+  <div id="budget-modal" class="modal-overlay">
+    <div class="modal-content glass-panel">
+      <h3>Set Monthly Budget 🎯</h3>
+      <div class="form-group">
+        <label>Category Name</label>
+        <select id="budget-category" class="glass-select full-width">
+          <option value="Food">Food</option>
+          <option value="Travel">Travel</option>
+          <option value="Entertainment">Entertainment</option>
+          <option value="Bills">Bills</option>
+          <option value="Shopping">Shopping</option>
+          <option value="Health">Health</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Monthly Limit (₹)</label>
+        <input type="number" id="budget-limit" placeholder="e.g. 5000">
+      </div>
+      <div class="modal-actions">
+        <button id="cancel-budget-btn" class="secondary-btn">Cancel</button>
+        <button id="save-budget-btn" class="primary-btn">Set Budget</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
